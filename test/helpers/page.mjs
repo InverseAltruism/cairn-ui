@@ -24,7 +24,7 @@ export function fakePage(opts = {}) {
   const mqListeners = [];
   const raf = [];
   const store = new Map(opts.stored === undefined ? [] : [["cairn-theme", opts.stored]]);
-  const log = { events: [], inUpdate: false, vtCalls: 0, listenerErrors: [] };
+  const log = { events: [], inUpdate: false, vtCalls: 0, listenerErrors: [], ready: false };
   const finishers = [];
 
   const root = {
@@ -37,7 +37,7 @@ export function fakePage(opts = {}) {
       contains: (c) => classes.has(c),
     },
     animate: (keyframes, options) => {
-      animations.push({ keyframes, options });
+      animations.push({ keyframes, options, afterReady: log.ready });
       return {};
     },
   };
@@ -63,6 +63,7 @@ export function fakePage(opts = {}) {
     document.startViewTransition = (update) => {
       log.vtCalls++;
       if (vt === "throws") throw new Error("InvalidStateError");
+      log.ready = false;
       const updateCallbackDone = Promise.resolve().then(() => {
         log.inUpdate = true;
         try {
@@ -77,6 +78,11 @@ export function fakePage(opts = {}) {
               throw new Error("AbortError: skipped");
             })
           : updateCallbackDone;
+      // Attached before the caller's await, so it runs first: an animation recorded with afterReady false began
+      // before the pseudo-elements existed.
+      ready.then(() => {
+        log.ready = true;
+      }, () => undefined);
       let finished = ready;
       if (vt === "manual") finished = ready.then(() => new Promise((done) => finishers.push(done)));
       ready.catch(() => undefined);

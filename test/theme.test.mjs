@@ -20,6 +20,7 @@ test("the reveal grows from the given point, applies inside the transition and s
   assert.equal(p.store.get("cairn-theme"), "dark");
   assert.deepEqual(p.log.events.map((e) => [e.type, e.detail.mode, e.inUpdate]), [["cairn:theme", "dark", true]]);
   assert.equal(p.animations.length, 1);
+  assert.equal(p.animations[0].afterReady, true, "the reveal starts once the pseudo-elements exist");
   const { keyframes, options } = p.animations[0];
   assert.equal(options.pseudoElement, "::view-transition-new(root)");
   assert.equal(keyframes.clipPath[0], "circle(0px at 25% 25%)");

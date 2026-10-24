@@ -32,6 +32,9 @@ commit and each file's sha256 next to the copy, and let the consumer's CI check 
 
 All of it runs under `script-src 'self'` with no inline script; nothing loads from another origin.
 
+Cascade layers. `tokens.css` declares everything inside `@layer tokens`. Name your own layers after it, in this order:
+`@layer tokens, base, components, page;`.
+
 Themes. Light is the default. `theme-init.js` sets `data-theme="light"` or `"dark"` and `data-theme-choice`
 (`light`, `dark` or `system`) on `<html>`. Without the script, a dark system setting still applies the dark tokens.
 `data-theme="dark"` or `"light"` on any element makes an island of that theme.
