@@ -1,0 +1,62 @@
+name: ci
+
+# Push/PR gate: lint, the em dash check, the generated tokens, the suite, and a byte-for-byte rebuild of the fonts from
+# the official Geist release, so a palette that breaks contrast, a stale tokens.css or a swapped font cannot land.
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+
+# Nothing by default; each job asks for what it needs.
+permissions: {}
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: "22"
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - run: npm run lint
+      - run: npm run check:dashes-paths
+      - run: npm run check:tokens
+      - run: npm test
+
+  # The committed fonts must be exactly what scripts/subset-fonts.sh makes from the release it names, with the tool
+  # versions it pins (wheels checked by hash).
+  fonts-reproduce:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: "3.12"
+      - name: tools (exact versions, hashes required)
+        run: |
+          python -m venv "$RUNNER_TEMP/ft"
+          printf '%s\n' \
+            'fonttools==4.66.1 --hash=sha256:7b8ff9e0edbcee2fbf7dff0c41b9041c1901c26acf64e23adb67495012df11de --hash=sha256:7234ae9e28db64273fbbfa72caebd0a97e3bdba6b05064114741b9539ef339d0' \
+            'brotli==1.2.0 --hash=sha256:072e7624b1fc4d601036ab3f4f27942ef772887e876beff0301d261210bca97f' \
+            > "$RUNNER_TEMP/req.txt"
+          "$RUNNER_TEMP/ft/bin/pip" install --only-binary=:all: --require-hashes -r "$RUNNER_TEMP/req.txt"
+      - name: rebuild the fonts and compare
+        run: |
+          curl -fsSL -o "$RUNNER_TEMP/geist.zip" https://github.com/vercel/geist-font/releases/download/v1.7.2/geist-font-v1.7.2.zip
+          sha256sum fonts/*.woff2 fonts/OFL.txt fonts/PROVENANCE.json > "$RUNNER_TEMP/before.sha"
+          bash scripts/subset-fonts.sh "$RUNNER_TEMP/geist.zip" "$RUNNER_TEMP/ft/bin/python"
+          sha256sum -c "$RUNNER_TEMP/before.sha"

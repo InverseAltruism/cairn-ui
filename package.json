@@ -1,0 +1,33 @@
+{
+  "name": "@inversealtruism/cairn-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared design tokens, fonts and the theme switch for the Cairn site and wallet",
+  "author": "InverseAltruism",
+  "license": "(MIT AND OFL-1.1)",
+  "repository": { "type": "git", "url": "https://github.com/InverseAltruism/cairn-ui.git" },
+  "type": "module",
+  "files": [
+    "tokens.css",
+    "fonts.css",
+    "theme.css",
+    "theme-init.js",
+    "theme.js",
+    "theme.d.ts",
+    "fonts/Geist-Latin.woff2",
+    "fonts/GeistMono-Latin.woff2",
+    "fonts/OFL.txt",
+    "fonts/PROVENANCE.json"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check:tokens": "node scripts/build.mjs --check",
+    "test": "node --test \"test/**/*.test.mjs\"",
+    "lint": "biome lint --max-diagnostics=none .",
+    "check:dashes-paths": "node scripts/check-dashes-paths.mjs"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.5.15"
+  },
+  "engines": { "node": ">=22" }
+}
