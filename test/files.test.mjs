@@ -29,6 +29,13 @@ test("the theme switch never removes the default animation of other view transit
   assert.equal(bare.test(css), false, "root snapshot rules must be scoped to .ui-theme-reveal or .ui-theme-fade");
 });
 
+test("the toggle icon follows the root's mode, as the toggle does, also inside an island", () => {
+  const css = source("theme.css");
+  const dark = [...css.matchAll(/^(.*)\.ui-theme-icon-(sun|bite|rays) \{$/gm)].map((m) => m[1]).filter((s) => s.includes("data-theme"));
+  assert.equal(dark.length, 3);
+  for (const sel of dark) assert.equal(sel, ':root[data-theme="dark"] ');
+});
+
 test("the shipped files stay small", () => {
   const limits = { "tokens.css": 8_000, "theme.js": 10_000, "theme-init.js": 2_000, "theme.css": 4_000, "fonts.css": 2_000 };
   for (const [f, max] of Object.entries(limits)) {

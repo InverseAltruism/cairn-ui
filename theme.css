@@ -21,7 +21,8 @@
   opacity: 0;
 }
 
-/* The toggle's icon (CairnTheme.iconSvg): a sun in light mode, eclipsed into a moon in dark mode. */
+/* The toggle's icon (CairnTheme.iconSvg): a sun in light mode, eclipsed into a moon in dark mode. It follows the root's
+   mode, as the toggle does, even inside a data-theme island. */
 .ui-theme-icon {
   inline-size: 18px;
   block-size: 18px;
@@ -36,13 +37,13 @@
 .ui-theme-icon-bite {
   transform: translate(8px, -8px);
 }
-[data-theme="dark"] .ui-theme-icon-sun {
+:root[data-theme="dark"] .ui-theme-icon-sun {
   transform: scale(1.75);
 }
-[data-theme="dark"] .ui-theme-icon-bite {
+:root[data-theme="dark"] .ui-theme-icon-bite {
   transform: none;
 }
-[data-theme="dark"] .ui-theme-icon-rays {
+:root[data-theme="dark"] .ui-theme-icon-rays {
   transform: rotate(-45deg) scale(0.4);
   opacity: 0;
 }

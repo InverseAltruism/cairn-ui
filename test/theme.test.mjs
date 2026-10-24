@@ -38,8 +38,13 @@ test("the reveal timing is the design tokens' (--ui-dur-4, --ui-ease)", async ()
 });
 
 test("reduced motion crossfades instead of revealing", async () => {
-  const p = page({ systemDark: false, reduced: true });
-  await p.T.set("dark");
+  const p = page({ systemDark: false, reduced: true, vt: "manual" });
+  const done = p.T.set("dark");
+  await p.settle();
+  assert.ok(p.classes.has("ui-theme-fade"), "the fade class pins the new view's opacity");
+  assert.equal(p.classes.has("ui-theme-reveal"), false, "no clip-path pin while fading");
+  p.finishTransition();
+  await done;
   assert.equal(p.animations.length, 1);
   assert.deepEqual([...p.animations[0].keyframes.opacity], [0, 1]);
   assert.equal(p.animations[0].options.duration, p.T.FADE_MS);
@@ -75,15 +80,35 @@ test("a skipped transition still switches and settles", async () => {
   assert.equal(p.attrs.get("data-theme"), "light", "the next switch is not blocked");
 });
 
-test("a second call while a switch runs returns that switch and changes nothing", async () => {
-  const p = page({ systemDark: false });
+test("a call during the reveal returns that switch and changes nothing; the next one runs after it", async () => {
+  const p = page({ systemDark: false, vt: "manual" });
   const first = p.T.set("dark");
+  await p.settle();
+  assert.equal(p.attrs.get("data-theme"), "dark");
+  assert.ok(p.classes.has("ui-theme-reveal"), "the reveal is still running");
   const second = p.T.set("light");
   assert.equal(second, first);
+  assert.equal(p.log.vtCalls, 1);
+  p.finishTransition();
   await first;
   assert.equal(p.attrs.get("data-theme"), "dark");
   assert.equal(p.store.get("cairn-theme"), "dark");
-  assert.equal(p.log.vtCalls, 1);
+  assert.equal([...p.classes].length, 0);
+  const third = p.T.set("light");
+  assert.notEqual(third, first);
+  await p.settle();
+  p.finishTransition();
+  await third;
+  assert.equal(p.attrs.get("data-theme"), "light");
+});
+
+test("without view transitions a second call in the same frame is dropped", async () => {
+  const p = page({ systemDark: false, vt: "none" });
+  const first = p.T.set("dark");
+  assert.equal(p.T.set("light"), first);
+  p.flushRaf();
+  await first;
+  assert.equal(p.attrs.get("data-theme"), "dark");
 });
 
 test("a choice that keeps the mode applies without a transition; system clears the stored choice", async () => {
@@ -93,6 +118,23 @@ test("a choice that keeps the mode applies without a transition; system clears t
   assert.equal(p.store.has("cairn-theme"), false);
   assert.equal(p.attrs.get("data-theme-choice"), "system");
   assert.equal(p.attrs.get("data-theme"), "light");
+});
+
+test("an unknown choice is treated as system", async () => {
+  const p = page({ stored: "dark", systemDark: false });
+  await p.T.set("sepia");
+  assert.equal(p.attrs.get("data-theme-choice"), "system");
+  assert.equal(p.attrs.get("data-theme"), "light");
+  assert.equal(p.store.has("cairn-theme"), false);
+});
+
+test("without theme-init.js the current mode is the system's", async () => {
+  const p = fakePage({ systemDark: true });
+  p.run("theme.js");
+  const T = p.window.CairnTheme;
+  assert.deepEqual({ ...T.current() }, { mode: "dark", choice: "system" });
+  await T.toggle();
+  assert.equal(p.attrs.get("data-theme"), "light", "the first toggle leaves the dark the page already shows");
 });
 
 test("blocked storage does not stop a switch", async () => {
@@ -124,6 +166,18 @@ test("sync follows the system only while the choice is system, and follows other
   assert.equal(p.attrs.get("data-theme"), "light", "an explicit choice ignores the system");
   p.storageEvent("other-key", "dark");
   assert.equal(p.attrs.get("data-theme"), "light");
+  p.storageEvent(null, null);
+  assert.equal(p.attrs.get("data-theme-choice"), "system", "another tab cleared its storage");
+  assert.equal(p.attrs.get("data-theme"), "dark");
+});
+
+test("sync works where MediaQueryList has only addListener", () => {
+  const p = page({ systemDark: false, legacyMediaQuery: true });
+  p.T.startSync();
+  p.systemChange(true);
+  assert.equal(p.attrs.get("data-theme"), "dark");
+  p.storageEvent("cairn-theme", "light");
+  assert.equal(p.attrs.get("data-theme"), "light", "the storage listener is installed too");
 });
 
 test("onChange reports each applied theme until unsubscribed", async () => {

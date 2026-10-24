@@ -24,13 +24,12 @@
   const root = () => document.documentElement;
   const systemDark = () => window.matchMedia("(prefers-color-scheme: dark)").matches;
 
-  /** The theme on the page now (theme-init.js set it before the first paint). */
+  /** The theme on the page now: what theme-init.js set before the first paint, or the system's without it. */
   function current() {
     const r = root();
-    return Object.freeze({
-      mode: r.getAttribute("data-theme") === "dark" ? "dark" : "light",
-      choice: parseChoice(r.getAttribute("data-theme-choice")),
-    });
+    const attr = r.getAttribute("data-theme");
+    const choice = parseChoice(r.getAttribute("data-theme-choice"));
+    return Object.freeze({ mode: attr === "dark" || attr === "light" ? attr : resolveMode(choice, systemDark()), choice });
   }
 
   function store(choice) {
@@ -77,6 +76,7 @@
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     r.classList.add(SWITCHING);
     if (typeof document.startViewTransition !== "function") {
+      // tracked like a transition, so a second call in this frame is dropped as during a reveal
       apply(choice);
       inFlight = new Promise((done) =>
         window.requestAnimationFrame(() => {
@@ -148,9 +148,12 @@
   function startSync() {
     if (syncing) return;
     syncing = true;
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    const follow = () => {
       if (current().choice === "system") apply("system");
-    });
+    };
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    if (typeof mql.addEventListener === "function") mql.addEventListener("change", follow);
+    else if (typeof mql.addListener === "function") mql.addListener(follow); // Safari before 14
     window.addEventListener("storage", (e) => {
       if (e.key === KEY || e.key === null) apply(parseChoice(e.newValue));
     });
@@ -179,7 +182,7 @@
 
   /**
    * The toggle's icon: a sun whose disc a second circle eclipses into a moon in dark mode (theme.css moves it). `id`
-   * names the mask and must be unique on the page.
+   * names the mask: a constant unique on the page (it is written into markup unescaped).
    */
   function iconSvg(id) {
     return (

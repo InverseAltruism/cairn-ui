@@ -8,8 +8,11 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const source = (file) => readFileSync(join(ROOT, file), "utf8");
 
 /**
- * opts: stored (the localStorage value), storageThrows, systemDark, reduced, vt ("ok" | "skip" | "throws" | "none"),
- * attrs (initial <html> attributes).
+ * opts: stored (the localStorage value), storageThrows, systemDark, reduced, attrs (initial <html> attributes),
+ * vt: "ok" (finishes once ready), "manual" (finishes when the test calls finishTransition), "skip", "throws", "none",
+ * legacyMediaQuery (MediaQueryList with addListener only, as in Safari before 14).
+ * As in a browser, the transition's update callback runs after startViewTransition returns, and an exception in an
+ * event listener is reported (log.listenerErrors) without stopping the dispatch.
  */
 export function fakePage(opts = {}) {
   const attrs = new Map(Object.entries(opts.attrs ?? {}));
@@ -21,7 +24,8 @@ export function fakePage(opts = {}) {
   const mqListeners = [];
   const raf = [];
   const store = new Map(opts.stored === undefined ? [] : [["cairn-theme", opts.stored]]);
-  const log = { events: [], inUpdate: false, vtCalls: 0 };
+  const log = { events: [], inUpdate: false, vtCalls: 0, listenerErrors: [] };
+  const finishers = [];
 
   const root = {
     getAttribute: (k) => (attrs.has(k) ? attrs.get(k) : null),
@@ -44,7 +48,13 @@ export function fakePage(opts = {}) {
     removeEventListener: (type, fn) => docListeners.set(type, (docListeners.get(type) ?? []).filter((f) => f !== fn)),
     dispatchEvent: (e) => {
       log.events.push({ type: e.type, detail: e.detail, inUpdate: log.inUpdate });
-      for (const fn of docListeners.get(e.type) ?? []) fn(e);
+      for (const fn of docListeners.get(e.type) ?? []) {
+        try {
+          fn(e);
+        } catch (err) {
+          log.listenerErrors.push(err);
+        }
+      }
       return true;
     },
   };
@@ -53,16 +63,25 @@ export function fakePage(opts = {}) {
     document.startViewTransition = (update) => {
       log.vtCalls++;
       if (vt === "throws") throw new Error("InvalidStateError");
-      log.inUpdate = true;
-      update();
-      log.inUpdate = false;
-      const skipped = Promise.reject(new Error("AbortError: skipped"));
-      skipped.catch(() => undefined);
-      return {
-        ready: vt === "skip" ? skipped : Promise.resolve(),
-        finished: vt === "skip" ? skipped : Promise.resolve(),
-        updateCallbackDone: Promise.resolve(),
-      };
+      const updateCallbackDone = Promise.resolve().then(() => {
+        log.inUpdate = true;
+        try {
+          update();
+        } finally {
+          log.inUpdate = false;
+        }
+      });
+      const ready =
+        vt === "skip"
+          ? updateCallbackDone.then(() => {
+              throw new Error("AbortError: skipped");
+            })
+          : updateCallbackDone;
+      let finished = ready;
+      if (vt === "manual") finished = ready.then(() => new Promise((done) => finishers.push(done)));
+      ready.catch(() => undefined);
+      finished.catch(() => undefined);
+      return { ready, finished, updateCallbackDone };
     };
   }
   const localStorage = {
@@ -86,7 +105,7 @@ export function fakePage(opts = {}) {
     innerHeight: 800,
     matchMedia: (q) => ({
       matches: q.includes("color-scheme: dark") ? state.systemDark : q.includes("reduced-motion: reduce") ? state.reduced : false,
-      addEventListener: (_t, fn) => mqListeners.push(fn),
+      ...(opts.legacyMediaQuery ? { addListener: (fn) => mqListeners.push(fn) } : { addEventListener: (_t, fn) => mqListeners.push(fn) }),
     }),
     requestAnimationFrame: (fn) => raf.push(fn),
     addEventListener: on(winListeners),
@@ -111,6 +130,10 @@ export function fakePage(opts = {}) {
     log,
     state,
     flushRaf: () => raf.splice(0).forEach((fn) => fn()),
+    /** Ends the oldest running "manual" transition. */
+    finishTransition: () => finishers.shift()?.(),
+    /** Lets queued promise callbacks run (the update callback, ready). */
+    settle: () => new Promise((r) => setImmediate(r)),
     systemChange: (dark) => {
       state.systemDark = dark;
       for (const fn of mqListeners) fn();
