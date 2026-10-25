@@ -1,7 +1,7 @@
 # cairn-ui
 
 The design parts that the Cairn site (cairn-substrate.com, its explorer) and the Cairn wallet share: the colour and
-type tokens for light and dark, the Geist fonts, and the theme switch. Components (buttons, tables, sheets) are not
+type tokens for light and dark, the Geist fonts, the theme switch, and the identity avatar. Components (buttons, tables, sheets) are not
 here: each surface keeps its own component layer on top of these tokens, and a component moves here only when two
 repositories actually share it.
 
@@ -14,6 +14,7 @@ repositories actually share it.
 | `theme-init.js` | Sets the theme on `<html>` before the first paint. |
 | `theme.js`, `theme.css` | The switch: `window.CairnTheme`, the circle reveal, the crossfade under reduced motion, the toggle icon. |
 | `theme.d.ts` | Types for TypeScript consumers. |
+| `avatar.js`, `avatar.css`, `avatar.d.ts` | The identity avatar: a circle with a soft conic gradient computed from a seed (a name or an address), the same wherever it is drawn. An ES module. |
 
 ## Using it
 
@@ -53,6 +54,17 @@ T.onChange(({ mode }) => chart.applyOptions(themeFor(mode)));   // redraw canvas
 `set` returns a promise that resolves when the new theme is on screen. A call while a switch runs returns that switch.
 Without View Transitions the theme swaps at once; under `prefers-reduced-motion` it crossfades in 180 ms.
 
+The identity avatar, in a page or a bundle (`avatar.css` linked after `tokens.css`):
+
+```js
+import { avatarHtml, avatarBackground, identitySeed } from "/ui/avatar.js";
+row.innerHTML = avatarHtml("alice") + "<b>alice</b>.csd";          // <span class="ui-avatar" style="background:...">
+el.classList.add("ui-avatar");
+el.style.background = avatarBackground(identitySeed(primaryName, address));   // an account: its primary name, else its address
+```
+
+Its size is `--ui-avatar-size` (32 px by default). It carries no letter: the name is always printed beside it.
+
 ## Guarantees and their tests
 
 - Every text colour reaches 4.5:1 on every ground in both themes, also on the state tints; control boundaries and focus
@@ -62,6 +74,9 @@ Without View Transitions the theme swaps at once; under `prefers-reduced-motion`
 - The theme is set before the first paint from storage or the system, and blocked storage falls back to the system
   (`test/theme-init.test.mjs`).
 - The switch's fallbacks, its one-at-a-time rule, its timing (the motion tokens) and the sync (`test/theme.test.mjs`).
+- The avatar is built from numbers only, whatever the seed; the same seed gives the same avatar; every stop stays in the
+  design's hue arc (blue, violet, pink, peach: no green or yellow, which mean up and caution), lightness and chroma; and
+  identities differ (`test/avatar.test.mjs`).
 - The fonts are the bytes their record names (`test/fonts.test.mjs`), and CI rebuilds them from the official release
   and compares byte for byte (`.github/workflows/ci.yml`, `fonts-reproduce`).
 

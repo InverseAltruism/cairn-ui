@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0 (2026-10-25)
+
+- The identity avatar (`avatar.js`, `avatar.css`, `avatar.d.ts`), the approved design's `.avatar`: a 32 px circle with a
+  conic gradient from blue through violet and pink to peach, light and soft, edged by a hairline of the ink (8% black on
+  light grounds, 8% white on dark ones). Each seed turns the gradient and picks its stretch of that hue arc; lightness
+  and chroma stay in the design's band, and no stop is green or yellow. It replaces the site's and the wallet's two
+  copies of the old dark linear gradient, which fell on olive greens for many names. It draws no letter. No existing
+  file changes.
+
 ## 0.2.0 (2026-10-25)
 
 - Five type steps between the scale's steps, named by their role in the approved design: `--ui-text-caption` (12px:
