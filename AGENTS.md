@@ -3,8 +3,8 @@
 > Briefing for coding agents and contributors. `CLAUDE.md` is a symlink to this file. `README.md` is for consumers.
 
 The shared design parts of the Cairn site and the Cairn wallet: tokens for light and dark, the Geist fonts, the theme
-switch. Public, MIT for the code and SIL OFL 1.1 for the fonts. Consumers copy a pinned commit and check each file's
-sha256; nothing is published to npm (`"private": true`).
+switch, the identity avatar. Public, MIT for the code and SIL OFL 1.1 for the fonts. Consumers copy a pinned commit and
+check each file's sha256; nothing is published to npm (`"private": true`).
 
 ## Rules
 
@@ -13,6 +13,7 @@ sha256; nothing is published to npm (`"private": true`).
 - A colour change keeps `test/palette.test.mjs` green: text at 4.5:1 on every ground in both themes, also on the state
   tints; control boundaries and focus rings at 3:1. Do not weaken that test to pass a colour.
 - Only what two or more repositories share belongs here. A component used by one surface stays in that surface.
+- `avatar.js` is an ES module with no imports (the site imports it, the wallet bundles it); its output is numbers only.
 - `theme-init.js` and `theme.js` are classic scripts with no imports: they run as they are in the site's pages
   (`script-src 'self'`) and in the extension. `theme.js` loads once (`window.CairnTheme` guard).
 - The switch's timing is the motion tokens': `REVEAL_MS` and `EASE` in `theme.js` equal `--ui-dur-4` and `--ui-ease`,
@@ -43,6 +44,7 @@ npm run check:dashes-paths
 | `src/colour.mjs` | WCAG luminance, contrast, compositing |
 | `src/tokens-css.mjs`, `scripts/build.mjs` | the generator and its writer/checker |
 | `tokens.css`, `fonts.css`, `theme.css`, `theme-init.js`, `theme.js`, `theme.d.ts`, `fonts/` | what consumers copy (`package.json` `files`) |
+| `avatar.js`, `avatar.css`, `avatar.d.ts` | the identity avatar (an ES module; the only colours outside the palette, in the design's hue arc, `test/avatar.test.mjs`) |
 | `scripts/subset-fonts.sh` | the reproducible font subset |
 | `test/` | `node --test`; `test/helpers/page.mjs` runs the real scripts in `node:vm` against stand-in browser globals |
 
