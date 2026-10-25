@@ -79,6 +79,14 @@ export const SCALE = {
   "text-4xl": "48px",
   "text-5xl": "56px",
   "text-hero": "clamp(44px, 7.4vw, 96px)",
+  // Role steps between the scale steps, named by the role the approved design gives them, so a size the scale lacks
+  // is a token and not a literal: subtitles, meta and action labels; column and panel headings; stat values and
+  // detail titles; page titles; the one large figure of a view (a balance, a price).
+  "text-caption": "12px",
+  "text-subhead": "15px",
+  "text-stat": "20px",
+  "text-title": "32px",
+  "text-figure": "40px",
   "leading-tight": "1.1",
   "leading-snug": "1.3",
   "leading-body": "1.55",
