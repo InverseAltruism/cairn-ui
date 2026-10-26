@@ -45,7 +45,7 @@ npm run check:dashes-paths
 | `src/tokens-css.mjs`, `scripts/build.mjs` | the generator and its writer/checker |
 | `tokens.css`, `fonts.css`, `theme.css`, `theme-init.js`, `theme.js`, `theme.d.ts`, `fonts/` | what consumers copy (`package.json` `files`) |
 | `avatar.js`, `avatar.css`, `avatar.d.ts` | the identity avatar (an ES module; the only colours outside the palette, in the design's hue arc, `test/avatar.test.mjs`) |
-| `mark.svg`, `csd-logo.jpg` | the logos: the Cairn mark (its part ids are the contract, `test/mark.test.mjs`) and the CSD coin's logo (the owner's file as given) |
+| `mark.svg`, `csd-logo.jpg` | the logos: the Cairn mark (its elements, attributes, part ids and box are the contract, `test/mark.test.mjs`; it sets no paint) and the CSD coin's logo (the owner's file as given) |
 | `scripts/subset-fonts.sh` | the reproducible font subset |
 | `test/` | `node --test`; `test/helpers/page.mjs` runs the real scripts in `node:vm` against stand-in browser globals |
 

@@ -1,7 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="300 330 590 530">
-  <!-- The Cairn mark: a prompt, a cursor and four stones (0 lowest). No fill is set, so it takes the colour of the
-       element that uses it. Consumers address it by id: #mark is the whole mark (draw it through <use> in a viewBox of
-       300 330 590 530), and #mark-prompt, #mark-cursor and #mark-stone-0 to #mark-stone-3 are its parts. -->
+  <!-- The Cairn mark: a prompt, a cursor and four stones (0 lowest). It sets no paint: the consumer sets
+       fill: currentColor (or a colour) on the <svg> that draws it. Consumers address it by id: #mark is the whole mark
+       (draw it through <use> in a viewBox of 300 330 590 530), and #mark-prompt, #mark-cursor and #mark-stone-0 to
+       #mark-stone-3 are its parts. -->
   <g id="mark">
     <path id="mark-prompt" d="M323 417 L391 474 L323 531 L323 509 L365 474 L323 439 Z"/>
     <rect id="mark-cursor" x="395" y="517" width="78" height="24"/>
