@@ -37,7 +37,7 @@ test("the toggle icon follows the root's mode, as the toggle does, also inside a
 });
 
 test("the shipped files stay small", () => {
-  const limits = { "tokens.css": 8_000, "theme.js": 10_000, "theme-init.js": 2_000, "theme.css": 4_000, "fonts.css": 2_000, "avatar.js": 6_000, "avatar.css": 1_000 };
+  const limits = { "tokens.css": 8_000, "theme.js": 10_000, "theme-init.js": 2_000, "theme.css": 4_000, "fonts.css": 2_000, "avatar.js": 6_000, "avatar.css": 1_000, "mark.svg": 2_000, "csd-logo.jpg": 8_000 };
   for (const [f, max] of Object.entries(limits)) {
     const n = statSync(join(ROOT, f)).size;
     assert.ok(n <= max, `${f} is ${n} bytes (limit ${max})`);

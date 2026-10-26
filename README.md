@@ -1,7 +1,7 @@
 # cairn-ui
 
 The design parts that the Cairn site (cairn-substrate.com, its explorer) and the Cairn wallet share: the colour and
-type tokens for light and dark, the Geist fonts, the theme switch, and the identity avatar. Components (buttons, tables, sheets) are not
+type tokens for light and dark, the Geist fonts, the theme switch, the identity avatar and the logos. Components (buttons, tables, sheets) are not
 here: each surface keeps its own component layer on top of these tokens, and a component moves here only when two
 repositories actually share it.
 
@@ -15,6 +15,7 @@ repositories actually share it.
 | `theme.js`, `theme.css` | The switch: `window.CairnTheme`, the circle reveal, the crossfade under reduced motion, the toggle icon. |
 | `theme.d.ts` | Types for TypeScript consumers. |
 | `avatar.js`, `avatar.css`, `avatar.d.ts` | The identity avatar: a circle with a soft conic gradient computed from a seed (a name or an address), the same wherever it is drawn. An ES module. |
+| `mark.svg`, `csd-logo.jpg` | The logos. `mark.svg` is the Cairn mark; it sets no paint, so draw it with `<use href="mark.svg#mark">` in a `300 330 590 530` viewBox on an `<svg>` that sets `fill: currentColor` (or a colour), or address its parts by id (`mark-prompt`, `mark-cursor`, `mark-stone-0` to `mark-stone-3`). `csd-logo.jpg` is the CSD coin's logo, 400 by 400. |
 
 ## Using it
 

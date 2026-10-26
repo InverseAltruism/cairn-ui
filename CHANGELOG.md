@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.4.0 (2026-10-26)
+
+- The logos: `mark.svg`, the Cairn mark (a prompt, a cursor and four stones; ids `mark`, `mark-prompt`,
+  `mark-cursor`, `mark-stone-0` to `mark-stone-3`; it sets no paint, so the consumer sets `fill: currentColor` on the `<svg>` that draws it),
+  moved here from the site, where it was the site's own file and the wallet kept a second copy of its geometry; and
+  `csd-logo.jpg`, the logo of the CSD coin (a white dot centred on black, 400 by 400), the owner's file byte for byte.
+  The mark's geometry is unchanged; only its comment is new. No shipped file changes. `test/mark.test.mjs` holds the
+  mark to the elements, attributes, ids and box its consumers rely on.
+
 ## 0.3.0 (2026-10-25)
 
 - The identity avatar (`avatar.js`, `avatar.css`, `avatar.d.ts`), the approved design's `.avatar`: a 32 px circle with a
