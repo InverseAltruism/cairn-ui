@@ -100,6 +100,10 @@ fontTools and Brotli versions the script checks; the output is byte-identical be
 Code: MIT (`LICENSE`), InverseAltruism. Fonts: SIL Open Font License 1.1, Copyright 2024 The Geist Project Authors
 (`fonts/OFL.txt`); the files here are a subset of the official release.
 
+The logos are not covered by the MIT licence: `mark.svg` is the Cairn mark and `csd-logo.jpg` the Compute Substrate
+coin's logo. Each stays with its owner; they are here so the Cairn site and the Cairn wallet draw them from one file,
+and a copy of this repository does not license their use.
+
 The theme switch is ported from InverseAltruism's Keshi brand package. Its reveal takes three details from Magic UI's
 AnimatedThemeToggler (MIT, https://magicui.design/docs/components/animated-theme-toggler): the centre as percentages of
 the viewport, the new view's start pinned in CSS before the animation runs, and one switch at a time.
