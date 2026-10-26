@@ -23,6 +23,9 @@ test("the mark holds only its drawing elements and their geometry attributes (no
     for (const k of Object.keys(t.attrs)) assert.ok(ATTRIBUTES.has(k), `attribute ${k} on <${t.name}>`);
   }
   assert.equal(tags[0].attrs.viewBox, "300 330 590 530");
+  assert.deepEqual(tags.map((t) => t.name).filter((n) => n === "svg"), ["svg"], "one <svg>, the root");
+  assert.equal(tags[0].name, "svg");
+  assert.doesNotMatch(svg.replace(/^\s*<\?xml [^?]*\?>/, ""), /<[?!]/, "no processing instruction (a stylesheet) or declaration");
 });
 
 test("the mark carries exactly the seven ids its consumers address, the stones as polygons", () => {
@@ -30,6 +33,8 @@ test("the mark carries exactly the seven ids its consumers address, the stones a
   assert.deepEqual([...ids].sort(), [...IDS].sort());
   assert.equal(tags.find((t) => t.attrs.id === "mark")?.name, "g");
   for (let i = 0; i < 4; i++) assert.equal(tags.find((t) => t.attrs.id === `mark-stone-${i}`)?.name, "polygon", `mark-stone-${i}`);
+  // a part without an id would be drawn by <use> but skipped by the intro and the canvas
+  for (const t of tags.filter((t) => t.name !== "svg" && t.name !== "g")) assert.ok(IDS.includes(t.attrs.id), `<${t.name}> without a part id`);
 });
 
 test("every coordinate lies inside the 300 330 590 530 box", () => {
