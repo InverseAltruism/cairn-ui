@@ -3,7 +3,8 @@
 > Briefing for coding agents and contributors. `CLAUDE.md` is a symlink to this file. `README.md` is for consumers.
 
 The shared design parts of the Cairn site and the Cairn wallet: tokens for light and dark, the Geist fonts, the theme
-switch, the identity avatar, the logos. Public, MIT for the code and SIL OFL 1.1 for the fonts. Consumers copy a pinned commit and
+switch, the identity avatar, the logos. Public, MIT for the code and SIL OFL 1.1 for the fonts; the logos are under
+neither (README, "Licence and credits"). Consumers copy a pinned commit and
 check each file's sha256; nothing is published to npm (`"private": true`).
 
 ## Rules
