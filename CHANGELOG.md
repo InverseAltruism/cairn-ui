@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- README: the avatar is decoration, not an identity check (owner decision 2026-11-02): it carries about 8 perceptual
+  bits, so two seeds can look alike, and the name or address printed beside it is the identity; the guarantee "identities
+  differ" is removed and its test is renamed for what it checks (the spread over the circle and the arc). The contrast
+  guarantee on the state tints is narrowed to what `test/palette.test.mjs` checks: muted text on a tint measures 3.92 to
+  4.47:1 and is not covered. No shipped file changes (batch 25: 1B-SMALL-A1-01, 1B-SMALL-A1-08).
+
 ## 0.4.0 (2026-10-26)
 
 - The logos: `mark.svg`, the Cairn mark (a prompt, a cursor and four stones; ids `mark`, `mark-prompt`,

@@ -68,8 +68,9 @@ Its size is `--ui-avatar-size` (32 px by default). It carries no letter: the nam
 
 ## Guarantees and their tests
 
-- Every text colour reaches 4.5:1 on every ground in both themes, also on the state tints; control boundaries and focus
-  rings reach 3:1 (`test/palette.test.mjs`).
+- Every text colour reaches 4.5:1 on every ground in both themes; on the state tints the state colour, ink and ink-2 do,
+  and muted text there measures 3.92 to 4.47:1 and is not covered; control boundaries and focus rings reach 3:1
+  (`test/palette.test.mjs`).
 - `tokens.css` is exactly the generator's output, and the dark values are the same under the system setting and under
   `data-theme="dark"` (`test/tokens.test.mjs`).
 - The theme is set before the first paint from storage or the system, and blocked storage falls back to the system
@@ -77,7 +78,8 @@ Its size is `--ui-avatar-size` (32 px by default). It carries no letter: the nam
 - The switch's fallbacks, its one-at-a-time rule, its timing (the motion tokens) and the sync (`test/theme.test.mjs`).
 - The avatar is built from numbers only, whatever the seed; the same seed gives the same avatar; every stop stays in the
   design's hue arc (blue, violet, pink, peach: no green or yellow, which mean up and caution), lightness and chroma; and
-  identities differ (`test/avatar.test.mjs`).
+  avatars spread over the circle and the arc (`test/avatar.test.mjs`). The avatar is decoration, not an identity check:
+  it carries about 8 perceptual bits, so two seeds can look alike; the name or address printed beside it is the identity.
 - The fonts are the bytes their record names (`test/fonts.test.mjs`), and CI rebuilds them from the official release
   and compares byte for byte (`.github/workflows/ci.yml`, `fonts-reproduce`).
 
