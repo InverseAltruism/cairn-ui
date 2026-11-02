@@ -67,13 +67,13 @@ test("every stop stays in the design's band: its hue arc, lightness and chroma, 
   assert.ok(lo > 0.6 && hi < 0.86, `${lo}..${hi}`);
 });
 
-test("identities differ: the start angle covers the circle, the stretch of the arc moves, and one changed letter moves both", () => {
+test("avatars spread: the start angle covers the circle, the stretch of the arc moves, and one changed letter moves both", () => {
   const all = seeds(3000).map(avatarSpec);
   const sectors = new Array(12).fill(0);
   for (const a of all) sectors[Math.floor(a.from / 30)]++;
   for (const n of sectors) assert.ok(n > all.length / 12 / 2, `start angles per 30 degrees: ${sectors}`);
   const coolest = all.map((a) => Math.min(...a.stops.map((c) => alongArc(oklch(c)[2]) % 359)));
-  assert.ok(Math.max(...coolest) - Math.min(...coolest) > 40, "the arc's stretch moves between identities");
+  assert.ok(Math.max(...coolest) - Math.min(...coolest) > 40, "the arc's stretch moves between seeds");
   let turned = 0;
   const base = seeds(1000, "name");
   for (const s of base) {
