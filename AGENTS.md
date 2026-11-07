@@ -23,6 +23,9 @@ check each file's sha256; nothing is published to npm (`"private": true`).
   animation (`test/files.test.mjs`).
 - Fonts change only through `scripts/subset-fonts.sh`, from the release and tool versions it checks; CI's
   `fonts-reproduce` job rebuilds them and compares bytes. Never commit a font file from anywhere else.
+- Every CI job runs on `ubuntu-24.04`, not a moving `-latest` image, as in the other Cairn repos: GitHub moved
+  `ubuntu-latest` to 26.04, where playwright-core 1.60.0 cannot install its Chromium, and a moving image changes the
+  toolchain under a job without a commit (`test/ci-runner-image.test.mjs`).
 - Dependencies: one dev dependency (Biome), exact-pinned, frozen install from the committed lockfile. New versions wait
   14 days after publication.
 - Docs and comments: no em dashes (`npm run check:dashes-paths`), plain prose, comments state constraints only.

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- CI runs both jobs on `ubuntu-24.04`, not `ubuntu-latest`, as the other Cairn repos do. GitHub moved the latest image
+  to 26.04, where playwright-core 1.60.0 cannot install its Chromium (the wallet's CI failed there on 2026-11-07); this
+  repo's jobs install no Chromium, so the pin keeps them from changing under a commit. `test/ci-runner-image.test.mjs`
+  refuses a `-latest` runner. No shipped file changes.
 - README: the avatar is decoration, not an identity check (owner decision 2026-11-02): it carries about 8 perceptual
   bits, so two seeds can look alike, and the name or address printed beside it is the identity; the guarantee "identities
   differ" is removed and its test is renamed for what it checks (the spread over the circle and the arc). The contrast
