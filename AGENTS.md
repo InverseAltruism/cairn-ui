@@ -33,7 +33,7 @@ check each file's sha256; nothing is published to npm (`"private": true`).
 ## Commands
 
 ```bash
-npm ci
+npm ci --ignore-scripts          # as CI installs
 npm run build && npm run check:tokens
 npm test
 npm run lint
@@ -56,6 +56,7 @@ npm run check:dashes-paths
 ## Consumers
 
 - cairn (private): `public/ui/`, served to the site and, through the front door, to the explorer.
-- cairn-wallet (public): copied into `dist/` by its build.
+- cairn-wallet (public): vendored in `src/vendor/cairn-ui/` with a `PROVENANCE.json` (the commit and each file's
+  sha256); its build copies the files to `dist/ui/` only when every byte matches.
 
 A change here reaches a consumer only when that consumer re-vendors a new commit in its own reviewed PR.
