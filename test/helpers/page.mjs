@@ -8,7 +8,9 @@ export const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 export const source = (file) => readFileSync(join(ROOT, file), "utf8");
 
 /**
- * opts: stored (the localStorage value), storageThrows, systemDark, reduced, attrs (initial <html> attributes),
+ * opts: stored (the localStorage value), storageThrows (every storage method throws), storageGetterThrows (reading
+ * window.localStorage itself throws, as a browser does with site data blocked, before any method is called), systemDark,
+ * reduced, attrs (initial <html> attributes),
  * vt: "ok" (finishes once ready), "manual" (finishes when the test calls finishTransition), "skip", "throws", "none",
  * legacyMediaQuery (MediaQueryList with addListener only, as in Safari before 14).
  * As in a browser, the transition's update callback runs after startViewTransition returns, and an exception in an
@@ -106,7 +108,10 @@ export function fakePage(opts = {}) {
   };
   const state = { systemDark: !!opts.systemDark, reduced: !!opts.reduced };
   const window = {
-    localStorage,
+    get localStorage() {
+      if (opts.storageGetterThrows) throw new Error("SecurityError");
+      return localStorage;
+    },
     innerWidth: 1000,
     innerHeight: 800,
     matchMedia: (q) => ({

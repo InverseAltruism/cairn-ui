@@ -37,6 +37,16 @@ test("blocked storage follows the system instead of throwing", () => {
   assert.equal(page.attrs.get("data-theme-choice"), "system");
 });
 
+test("storage that throws when localStorage itself is read follows the system instead of throwing", () => {
+  const dark = init({ storageGetterThrows: true, systemDark: true });
+  assert.equal(dark.attrs.get("data-theme"), "dark");
+  assert.equal(dark.attrs.get("data-theme-choice"), "system");
+  assert.equal(dark.root.style.colorScheme, "dark");
+  const light = init({ storageGetterThrows: true, systemDark: false });
+  assert.equal(light.attrs.get("data-theme"), "light");
+  assert.equal(light.attrs.get("data-theme-choice"), "system");
+});
+
 test("theme-init.js reads the key theme.js writes", () => {
   const writer = fakePage({});
   writer.run("theme.js");
