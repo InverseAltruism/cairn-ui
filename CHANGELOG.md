@@ -10,7 +10,7 @@
   bits, so two seeds can look alike, and the name or address printed beside it is the identity; the guarantee "identities
   differ" is removed and its test is renamed for what it checks (the spread over the circle and the arc). The contrast
   guarantee on the state tints is narrowed to what `test/palette.test.mjs` checks: muted text on a tint is not covered.
-  No shipped file changes (batch 25: 1B-SMALL-A1-01, 1B-SMALL-A1-08).
+  No shipped file changes.
 - Docs: the README and AGENTS.md list the pairs `test/palette.test.mjs` checks and the two it does not (muted text on a
   state tint, 3.92 to 5.22:1 with 9 of 18 pairs below 4.5; light `line-strong` on `sunken`, 2.90:1); `avatarHtml` needs
   `style-src 'unsafe-inline'`; the 0.4.0 entry says its two files are new. Tests: `fakePage` can throw on the read of
