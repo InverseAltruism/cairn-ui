@@ -65,12 +65,16 @@ el.style.background = avatarBackground(identitySeed(primaryName, address));   //
 ```
 
 Its size is `--ui-avatar-size` (32 px by default). It carries no letter: the name is always printed beside it.
+`avatarHtml` writes an inline `style` attribute, so a page that uses it needs `style-src 'unsafe-inline'` (or builds the
+element itself, as the last two lines above do); both current consumers allow it.
 
 ## Guarantees and their tests
 
-- Every text colour reaches 4.5:1 on every ground in both themes; on the state tints the state colour, ink and ink-2 do,
-  and muted text there measures 3.92 to 4.47:1 and is not covered; control boundaries and focus rings reach 3:1
-  (`test/palette.test.mjs`).
+- Every text colour reaches 4.5:1 on every ground (`bg`, `surface`, `sunken`) in both themes. On each state tint (`up`,
+  `down`, `warn`, over each ground) its own state colour, ink and ink-2 reach 4.5:1; muted text there is not checked and
+  measures 3.92 to 5.22:1, with 9 of its 18 pairs below 4.5. Control boundaries and focus rings (`line-strong`, `ink`)
+  reach 3:1 on `bg` and `surface`; light `line-strong` on `sunken` measures 2.90:1 (dark 3.21:1) and is not a pair the
+  test checks, so do not draw a control border on a sunken fill with it (`test/palette.test.mjs`).
 - `tokens.css` is exactly the generator's output, and the dark values are the same under the system setting and under
   `data-theme="dark"` (`test/tokens.test.mjs`).
 - The theme is set before the first paint from storage or the system, and blocked storage falls back to the system

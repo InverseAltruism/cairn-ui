@@ -144,6 +144,16 @@ test("blocked storage does not stop a switch", async () => {
   assert.equal(p.attrs.get("data-theme"), "dark");
 });
 
+test("storage that throws when localStorage itself is read does not stop a switch", async () => {
+  const p = page({ storageGetterThrows: true, systemDark: false });
+  await p.T.set("dark");
+  assert.equal(p.attrs.get("data-theme"), "dark");
+  assert.equal(p.attrs.get("data-theme-choice"), "dark");
+  await p.T.set("system");
+  assert.equal(p.attrs.get("data-theme"), "light");
+  assert.equal(p.attrs.get("data-theme-choice"), "system");
+});
+
 test("toggle reveals from the centre of the pressed element", async () => {
   const p = page({ systemDark: false });
   await p.T.toggle({ getBoundingClientRect: () => ({ left: 900, top: 10, width: 40, height: 40 }) });

@@ -11,8 +11,10 @@ check each file's sha256; nothing is published to npm (`"private": true`).
 
 - One source of values: every token lives in `src/palette.mjs`. `tokens.css` is generated (`npm run build`) and
   committed; never edit it by hand. Every token is `--ui-*`, so it cannot collide with a consumer's own properties.
-- A colour change keeps `test/palette.test.mjs` green: text at 4.5:1 on every ground in both themes, also on the state
-  tints; control boundaries and focus rings at 3:1. Do not weaken that test to pass a colour.
+- A colour change keeps `test/palette.test.mjs` green: every text role at 4.5:1 on `bg`, `surface` and `sunken` in both
+  themes; on each state tint, its own state colour, `ink` and `ink-2` at 4.5:1; control boundaries and focus rings
+  (`line-strong`, `ink`) at 3:1 on `bg` and `surface`. `muted` on a tint and `line-strong` on `sunken` are not checked
+  (the README's "Guarantees and their tests" has their ratios). Do not weaken that test to pass a colour.
 - Only what two or more repositories share belongs here. A component used by one surface stays in that surface.
 - `avatar.js` is an ES module with no imports (the site imports it, the wallet bundles it); its output is numbers only.
 - `theme-init.js` and `theme.js` are classic scripts with no imports: they run as they are in the site's pages

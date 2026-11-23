@@ -1,5 +1,5 @@
 // The one source of every token value. tokens.css is generated from this file (scripts/build.mjs); the tests read it
-// to prove contrast. Colours are the Stone palette (Plan 89, D-89-1): one neutral ramp per mode with a slight warm bias.
+// to prove contrast. Colours are the Stone palette: one neutral ramp per mode with a slight warm bias.
 
 /** Colour roles per mode. Text roles must clear 4.5:1 on every ground; see TEXT and GROUNDS below. */
 export const COLOURS = {
@@ -39,7 +39,7 @@ export const COLOURS = {
 
 /** Grounds that text sits on. */
 export const GROUNDS = ["bg", "surface", "sunken"];
-/** Roles used for text: each must reach 4.5:1 on every ground (WCAG 1.4.3, the site's D5 floor). */
+/** Roles used for text: each must reach 4.5:1 on every ground (WCAG 1.4.3). */
 export const TEXT = ["ink", "ink-2", "muted", "up", "down", "warn"];
 /** Roles that draw a control's boundary or a focus ring: 3:1 on bg and surface (WCAG 1.4.11). */
 export const NON_TEXT = ["line-strong", "ink"];

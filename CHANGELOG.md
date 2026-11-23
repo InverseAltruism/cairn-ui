@@ -9,8 +9,13 @@
 - README: the avatar is decoration, not an identity check (owner decision 2026-11-02): it carries about 8 perceptual
   bits, so two seeds can look alike, and the name or address printed beside it is the identity; the guarantee "identities
   differ" is removed and its test is renamed for what it checks (the spread over the circle and the arc). The contrast
-  guarantee on the state tints is narrowed to what `test/palette.test.mjs` checks: muted text on a tint measures 3.92 to
-  4.47:1 and is not covered. No shipped file changes (batch 25: 1B-SMALL-A1-01, 1B-SMALL-A1-08).
+  guarantee on the state tints is narrowed to what `test/palette.test.mjs` checks: muted text on a tint is not covered.
+  No shipped file changes.
+- Docs: the README and AGENTS.md list the pairs `test/palette.test.mjs` checks and the two it does not (muted text on a
+  state tint, 3.92 to 5.22:1 with 9 of 18 pairs below 4.5; light `line-strong` on `sunken`, 2.90:1); `avatarHtml` needs
+  `style-src 'unsafe-inline'`; the 0.4.0 entry says its two files are new. Tests: `fakePage` can throw on the read of
+  `window.localStorage` itself, as a browser with site data blocked does, and the theme tests assert that the page still
+  gets a theme. No shipped file changes.
 
 ## 0.4.0 (2026-10-26)
 
@@ -18,8 +23,8 @@
   `mark-cursor`, `mark-stone-0` to `mark-stone-3`; it sets no paint, so the consumer sets `fill: currentColor` on the `<svg>` that draws it),
   moved here from the site, where it was the site's own file and the wallet kept a second copy of its geometry; and
   `csd-logo.jpg`, the logo of the CSD coin (a white dot centred on black, 400 by 400), the owner's file byte for byte.
-  The mark's geometry is unchanged; only its comment is new. No shipped file changes. `test/mark.test.mjs` holds the
-  mark to the elements, attributes, ids and box its consumers rely on.
+  The mark's geometry is unchanged; only its comment is new. Both files are new in `package.json` `files`; no existing
+  shipped file changes. `test/mark.test.mjs` holds the mark to the elements, attributes, ids and box its consumers rely on.
 
 ## 0.3.0 (2026-10-25)
 
